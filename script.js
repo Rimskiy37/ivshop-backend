@@ -88,7 +88,6 @@ async function logout() {
   }
 }
 
-// Инициализация страницы в зависимости от URL
 function initPageSpecific() {
   const path = window.location.pathname;
   
@@ -103,8 +102,8 @@ function initPageSpecific() {
   } else if (path.includes('seller.html')) {
     initSellerPage();
   } else if (path === '/' || path.includes('index.html')) {
-    loadProducts(); // Загружаем товары на главную
-    loadAccounts(); // <-- ДОБАВЬ ЭТУ СТРОКУ
+    loadProducts(); // Загружаем игры
+    loadAccounts(); // Загружаем аккаунты
   }
 }
 
@@ -570,15 +569,13 @@ function displayProduct(product) {
   }
 }
 
-// ------------------ ГЛАВНАЯ (ЗАГРУЗКА ТОВАРОВ) ------------------
+// ------------------ ИГРЫ ------------------
 async function loadProducts() {
   try {
     const res = await fetch(`/api/products`);
     if (res.ok) {
       const products = await res.json();
       renderProducts(products);
-    } else {
-      console.error('Failed to load products');
     }
   } catch (err) {
     console.error(err);
@@ -586,15 +583,35 @@ async function loadProducts() {
 }
 
 function renderProducts(products) {
-  const gamesGrid = document.querySelector('.games-grid');
+  const gamesGrid = document.getElementById('games-grid-container');
   if (!gamesGrid) return;
   
-  if (products.length === 0) {
-    gamesGrid.innerHTML = '<p class="empty-message">Товаров пока нет</p>';
+  // Фильтруем только игры (категория "Игры")
+  const games = products.filter(p => p.category === 'Игры');
+  
+  if (games.length === 0) {
+    gamesGrid.innerHTML = '<p class="empty-message">Игры скоро появятся</p>';
     return;
   }
+  
+  gamesGrid.innerHTML = games.map(product => `
+    <div class="game-card" data-id="${product.id}">
+      <div class="game-image" style="background-image: url('${product.image || 'img/default-game.jpg'}');">
+        <span class="price">${product.price.toLocaleString('ru-RU')} ₽</span>
+      </div>
+      <div class="game-info">
+        <h3>${product.name}</h3>
+        <div class="game-meta">
+          <span class="genre">${product.category || 'Игры'}</span>
+          <span class="rating">★ 4.8 (${Math.floor(Math.random() * 200) + 50} отзывов)</span>
+        </div>
+        <a href="product.html?id=${product.id}" class="buy-btn">Купить сейчас</a>
+      </div>
+    </div>
+  `).join('');
+}
 
-  // ------------------ АККАУНТЫ ------------------
+// ------------------ АККАУНТЫ ------------------
 async function loadAccounts() {
   try {
     const res = await fetch(`/api/products`);
@@ -608,21 +625,17 @@ async function loadAccounts() {
 }
 
 function renderAccounts(products) {
-  const accountsGrid = document.querySelector('.accounts-grid');
+  const accountsGrid = document.getElementById('accounts-grid-container');
   if (!accountsGrid) return;
   
-  // Фильтруем только аккаунты
-  const accounts = products.filter(p => 
-    p.category === 'Аккаунты' || p.category?.toLowerCase().includes('аккаунт')
-  );
+  // Фильтруем только аккаунты (категория "Аккаунты")
+  const accounts = products.filter(p => p.category === 'Аккаунты');
   
   if (accounts.length === 0) {
-    // Если аккаунтов нет в базе - показываем заглушку или оставляем статические
-    console.log('Аккаунты не найдены в базе');
+    accountsGrid.innerHTML = '<p class="empty-message">Аккаунты скоро появятся</p>';
     return;
   }
   
-  // Заменяем статические карточки на динамические
   accountsGrid.innerHTML = accounts.map(account => `
     <div class="account-card">
       <div class="account-image" style="background-image: url('${account.image || 'img/default-account.jpg'}');"></div>
@@ -630,30 +643,14 @@ function renderAccounts(products) {
         <h3>${account.name}</h3>
         <div class="account-meta">
           ${account.description ? `<span>${account.description}</span>` : '<span>Аккаунт</span>'}
+          <span>⭐ ${(Math.random() * 1 + 4).toFixed(1)} (${Math.floor(Math.random() * 300) + 30})</span>
         </div>
         <div class="seller-info">
           <span class="seller-name">${account.seller?.username || 'IVSHOP'}</span>
-          <span class="seller-rating">★★★★★ 5.0</span>
+          <span class="seller-rating">★★★★★ ${(Math.random() * 0.5 + 4.5).toFixed(1)}</span>
         </div>
         <div class="account-price">${account.price.toLocaleString('ru-RU')} ₽</div>
         <a href="product.html?id=${account.id}" class="buy-btn">Купить</a>
-      </div>
-    </div>
-  `).join('');
-}
-  
-  gamesGrid.innerHTML = products.map(product => `
-    <div class="game-card" data-id="${product.id}">
-      <div class="game-image" style="background-image: url('${product.image || 'img/default.jpg'}');">
-        <span class="price">${product.price.toLocaleString('ru-RU')} ₽</span>
-      </div>
-      <div class="game-info">
-        <h3>${product.name}</h3>
-        <div class="game-meta">
-          <span class="genre">${product.category || 'Игры'}</span>
-          <span class="rating">★ 5.0</span>
-        </div>
-        <a href="product.html?id=${product.id}" class="buy-btn">Купить сейчас</a>
       </div>
     </div>
   `).join('');
