@@ -619,6 +619,7 @@ function renderProducts(products) {
         <h3>${product.name}</h3>
         <div class="game-meta">
           <span class="genre">${product.category || 'Игры'}</span>
+          <span class="seller-name">${product.seller?.username || 'IVSHOP'}</span>
           <span class="rating">★ 4.8 (${Math.floor(Math.random() * 200) + 50} отзывов)</span>
         </div>
         <a href="product.html?id=${product.id}" class="buy-btn">Купить сейчас</a>
