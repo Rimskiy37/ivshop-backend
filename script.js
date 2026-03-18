@@ -104,6 +104,7 @@ function initPageSpecific() {
     initSellerPage();
   } else if (path === '/' || path.includes('index.html')) {
     loadProducts(); // Загружаем товары на главную
+    loadAccounts(); // <-- ДОБАВЬ ЭТУ СТРОКУ
   }
 }
 
@@ -592,6 +593,54 @@ function renderProducts(products) {
     gamesGrid.innerHTML = '<p class="empty-message">Товаров пока нет</p>';
     return;
   }
+
+  // ------------------ АККАУНТЫ ------------------
+async function loadAccounts() {
+  try {
+    const res = await fetch(`/api/products`);
+    if (res.ok) {
+      const products = await res.json();
+      renderAccounts(products);
+    }
+  } catch (err) {
+    console.error('Error loading accounts:', err);
+  }
+}
+
+function renderAccounts(products) {
+  const accountsGrid = document.querySelector('.accounts-grid');
+  if (!accountsGrid) return;
+  
+  // Фильтруем только аккаунты
+  const accounts = products.filter(p => 
+    p.category === 'Аккаунты' || p.category?.toLowerCase().includes('аккаунт')
+  );
+  
+  if (accounts.length === 0) {
+    // Если аккаунтов нет в базе - показываем заглушку или оставляем статические
+    console.log('Аккаунты не найдены в базе');
+    return;
+  }
+  
+  // Заменяем статические карточки на динамические
+  accountsGrid.innerHTML = accounts.map(account => `
+    <div class="account-card">
+      <div class="account-image" style="background-image: url('${account.image || 'img/default-account.jpg'}');"></div>
+      <div class="account-info">
+        <h3>${account.name}</h3>
+        <div class="account-meta">
+          ${account.description ? `<span>${account.description}</span>` : '<span>Аккаунт</span>'}
+        </div>
+        <div class="seller-info">
+          <span class="seller-name">${account.seller?.username || 'IVSHOP'}</span>
+          <span class="seller-rating">★★★★★ 5.0</span>
+        </div>
+        <div class="account-price">${account.price.toLocaleString('ru-RU')} ₽</div>
+        <a href="product.html?id=${account.id}" class="buy-btn">Купить</a>
+      </div>
+    </div>
+  `).join('');
+}
   
   gamesGrid.innerHTML = products.map(product => `
     <div class="game-card" data-id="${product.id}">
