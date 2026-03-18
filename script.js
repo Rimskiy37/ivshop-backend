@@ -562,7 +562,12 @@ function displayProduct(product) {
   document.getElementById('product-title').textContent = product.name;
   document.getElementById('product-price').textContent = product.price.toLocaleString('ru-RU') + ' ₽';
   document.getElementById('seller-name').textContent = product.seller?.username || 'IVSHOP';
-  document.getElementById('seller-rating').textContent = '★★★★★ 5.0';
+  
+  // Генерируем рандомный рейтинг для каждого товара
+  const rating = (Math.random() * 1 + 4).toFixed(1);
+  const reviews = Math.floor(Math.random() * 300) + 50;
+  document.getElementById('seller-rating').innerHTML = `★★★★★ ${rating} (${reviews} отзывов)`;
+  
   document.getElementById('product-description').textContent = product.description || 'Описание отсутствует';
   if (product.image) {
     document.getElementById('product-image').style.backgroundImage = `url('${product.image}')`;

@@ -202,16 +202,24 @@
     </style>
 </head>
 <body class="dark-theme">
-    <header class="main-header">
-        <div class="container">
-            <div class="header-flex">
-                <a href="index.html" class="logo-link">
-                    <img src="img/logo.png" alt="IVSHOP" class="logo">  <!-- ПРОВЕРЬ ПУТЬ -->
+<header class="main-header">
+    <div class="container">
+        <div class="header-flex">
+            <a href="index.html" class="logo-link">
+                <img src="img/logo.png" alt="IVSHOP" class="logo">
+            </a>
+            <div class="header-actions">
+                <a href="balance.html" class="balance-link" id="header-balance">0 ₽</a>
+                <a href="profile.html" class="user-profile">
+                    <i class="fas fa-user"></i>
                 </a>
-                ...
+                <button id="theme-toggle" class="theme-btn">
+                    <i class="fas fa-sun"></i>
+                </button>
             </div>
         </div>
-    </header>
+    </div>
+</header>
     <main>
         <section class="product-section">
             <div class="container">
@@ -221,7 +229,7 @@
                         <h1 class="product-title" id="product-title"></h1>
                         <div class="product-seller">
                             <span class="seller-name" id="seller-name"></span>
-                            <span class="seller-rating" id="seller-rating"></span>
+                            <span class="seller-rating" id="seller-rating">★★★★★ 5.0 (156 отзывов)</span>
                         </div>
                         <div class="product-price" id="product-price"></div>
                         <div class="product-description" id="product-description"></div>
